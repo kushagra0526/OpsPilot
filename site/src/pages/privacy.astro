@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import { AUTHOR } from "../lib/site";
+---
+
+<Base path="/privacy">
+  <header class="page-head">
+    <p class="kicker">Privacy</p>
+    <h1>What the demo processes, and what it does not</h1>
+    <p class="lede">
+      Short version: this website collects nothing. The OpsPilot app runs on your own machine and sends the requests
+      you type to the language-model provider you configure. All store data is invented.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="site">
+    <p class="section-label">This website</p>
+    <h2 id="site">No cookies, no analytics, no accounts</h2>
+    <div class="prose">
+      <p>
+        These pages are static HTML. They set no cookies, run no analytics or tracking scripts, and make no requests to
+        other domains: fonts and images are served from this site. There is no sign-up, no form and no comment box, so
+        there is nothing you can submit.
+      </p>
+      <p>
+        Whoever hosts the site may keep standard server logs, such as IP address, time and page requested, as web servers
+        do. External links to GitHub and LinkedIn take you to those services, whose own policies then apply.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="app">
+    <p class="section-label">The OpsPilot app</p>
+    <h2 id="app">What happens to what you type</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          The app runs locally. When you submit a request in live mode, the request and the evidence retrieved for it
+          (policy excerpts and records from the demo database) are sent to Groq to generate the plan and the
+          explanation, and the request with the agent's reply is sent again to extract long-term memories. If you also configure a Google API key, the same content may be sent to Google's Gemini API
+          when Groq is unavailable. Those providers process it under their own terms and privacy policies.
+        </p>
+        <p>
+          In demo mode nothing is sent to any provider: the model's text is scripted locally.
+        </p>
+        <p>
+          Everything the app stores stays on your machine under <code>data/runtime/</code>: the demo database, the
+          audit log, long-term memories, saved conversation turns and LangGraph checkpoints. "Reset data" in the app,
+          or <code>make seed</code>, rebuilds it from the committed knowledge files.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: Please note">
+        <span class="note-label" aria-hidden="true">Please note</span>
+        Because typed requests leave your machine in live mode, do not type real personal data into the demo.
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="data">
+    <p class="section-label">Store data</p>
+    <h2 id="data">Every customer and order is fictional</h2>
+    <div class="prose">
+      <p>
+        NovaMart does not exist. Its customers, email addresses, orders, products, policies and inventory were written
+        or generated for this project. Emails the agent "sends" are only written to a local outbox table and never
+        delivered.
+      </p>
+      <p>
+        Questions about this notice: contact {AUTHOR.name} via <a href={AUTHOR.linkedin}>LinkedIn</a>. See also the
+        <a href="/terms">terms of use</a>.
+      </p>
+    </div>
+  </section>
+</Base>

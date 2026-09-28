@@ -1,0 +1,191 @@
+---
+import Base from "../layouts/Base.astro";
+import Diagram from "../components/Diagram.astro";
+import Shot from "../components/Shot.astro";
+
+const nodes = [
+  ["understand", "Regular expressions extract order, customer and product IDs and emails; a small model adds a one-line summary and a request type. The regex wins on IDs.", "small model"],
+  ["load_memory", "Loads up to ten long-term memories for the customers involved, including owners of referenced orders, plus the operator's. Preferences come before interaction summaries.", "none"],
+  ["retrieve", "Two parallel waves across the four sources return evidence items with stable IDs, conflict notes and missing-data notes.", "none"],
+  ["reason_and_plan", "Builds the planning prompt and parses a structured decision: answer, act, clarify, escalate or refuse, with cited analysis and typed steps. Off-domain requests are refused here without a model call.", "large model"],
+  ["validate", "Checks every citation against the retrieved evidence, validates tool arguments and step dependencies, classifies risk, writes proposed entries to the audit log and runs the business preconditions.", "none"],
+  ["approval_gate", "Collects the steps that the risk policy says need a person and logs each approval request.", "none"],
+  ["await_approval", "Pauses the graph with a LangGraph interrupt. The run is checkpointed in SQLite and resumes when the operator approves or rejects each step.", "none"],
+  ["execute", "Runs the steps layer by layer, independent steps in parallel on a thread pool, re-checking preconditions just before each tool call.", "none"],
+  ["observe", "Adds read-tool results to the evidence and decides whether to plan again, at most three iterations in total.", "none"],
+  ["respond", "Writes the operator-facing explanation. Evidence IDs are rewritten as readable references in code.", "large model"],
+  ["save_memory", "Extracts durable facts such as a refund-method preference and stores a one-line summary per customer.", "small model"],
+];
+---
+
+<Base path="/how-it-works">
+  <header class="page-head">
+    <p class="kicker">How it works</p>
+    <h1>Eleven steps from a typed request to an explained action</h1>
+    <p class="lede">
+      OpsPilot is a LangGraph state machine. Each request passes through the same eleven steps, and each step
+      writes what it did to a trace that the operator can open.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="graph">
+    <p class="section-label">The agent graph</p>
+    <h2 id="graph">One request, end to end</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          The graph starts by working out which orders, customers and products a request is about, then gathers
+          everything the store knows about them. The large model plans only after retrieval, and code validates
+          the plan before anything can run. High-risk steps stop at an interrupt until a person decides.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: Why LangGraph">
+        <span class="note-label" aria-hidden="true">Why LangGraph</span>
+        Its interrupt and resume primitives, with a SQLite checkpointer, let an approval wait indefinitely and
+        survive a restart, and its conditional edges express the replanning loop directly.
+      </aside>
+    </div>
+    <Diagram
+      id="agent-graph"
+      number={1}
+      caption="The agent graph from docs/architecture.md, rendered to SVG at build time. Dotted lines mark steps that write to the audit log."
+    />
+    <section class="table-scroll" aria-label="The eleven graph steps" tabindex="0">
+      <table>
+        <caption>What each step does, and which model tier it calls.</caption>
+        <thead><tr><th scope="col">Step</th><th scope="col">What it does</th><th scope="col">Model</th></tr></thead>
+        <tbody>
+          {nodes.map(([name, what, model]) => (
+            <tr><td class="mono">{name}</td><td>{what}</td><td>{model}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  </section>
+
+  <section class="section" aria-labelledby="knowledge">
+    <p class="section-label">Knowledge</p>
+    <h2 id="knowledge">Four sources, one evidence list</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          Policies live in Chroma as one chunk per numbered section, embedded locally with the ONNX
+          all-MiniLM-L6-v2 model, so no embedding API is involved. Orders, customers, refunds and tickets live in
+          SQLite. A warehouse CSV feed carries stock counts with snapshot times, and a JSON FAQ is indexed next to
+          the policies.
+        </p>
+        <p>
+          Every retrieved fact becomes an evidence item with a stable ID, such as
+          <code>policy:return_policy_v2§2</code>, <code>db:orders:ORD-1001</code>,
+          <code>csv:inventory:EL-HP-02</code> or <code>memory:12</code>. The planner may cite only these IDs, and
+          the validation step rejects any other.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: Computed facts">
+        <span class="note-label" aria-hidden="true">Computed facts</span>
+        Order evidence includes days since delivery, days past the delivery promise and the amount still
+        refundable, so the model does not do date or money arithmetic on its own.
+      </aside>
+    </div>
+    <Diagram
+      id="knowledge"
+      number={2}
+      caption="Where the knowledge comes from and where code sits between the plan and the database."
+    />
+  </section>
+
+  <section class="section" aria-labelledby="conflicts">
+    <p class="section-label">Incomplete and conflicting information</p>
+    <h2 id="conflicts">Old policies stay visible, but only the current one applies</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          Return Policy version 1 allowed 30 days for everything. Version 2, effective 1 March 2026, allows 14 days
+          for electronics and makes grocery non-returnable. When a version 1 section is retrieved, the retriever
+          also fetches its current counterpart from version 2, marks the old chunk as superseded and records a
+          conflict note. The model sees both; validation refuses any step that relies on the superseded one.
+        </p>
+        <p>
+          The same idea covers data. When the database says a product has 5 units but the fresher warehouse feed
+          says 0, both values stay in the evidence and the fresher one wins. When an order has no delivery date,
+          the gap is listed as missing information, and the agent escalates instead of guessing.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: See also">
+        <span class="note-label" aria-hidden="true">See also</span>
+        The <a href="/scenarios">scenarios page</a> shows the stock conflict (scenario 7) and the missing delivery
+        date (scenario 6) as the agent handled them.
+      </aside>
+    </div>
+    <div class="shots-2">
+      <Shot
+        file="sources-superseded.png"
+        number={3}
+        alt="Sources panel for the return-window question: Return Policy v2 section 2 is listed normally, while the retrieved Return Policy v1 sections are struck through and labelled superseded, not applied."
+        caption="Sources for 'What is the return window for Nova Buds Pro headphones?'. Version 1 sections are shown but struck through."
+      />
+      <Shot
+        file="conflict.png"
+        number={4}
+        alt="Reasoning panel for an exchange request: an inventory conflict note says the database reports 5 units and the warehouse feed reports 0, and resolves to the fresher feed; a missing-information note says ORD-1004 has no delivery date."
+        caption="An exchange request with conflicting stock counts and a missing delivery date. Both are surfaced before the agent decides."
+      />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="execution">
+    <p class="section-label">Execution</p>
+    <h2 id="execution">Parallel where possible, ordered where needed</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          Plan steps declare dependencies with <code>depends_on</code>. The executor sorts them into layers and
+          runs each layer on a pool of four threads, so a coupon and a ticket can run together while the email that
+          reports them waits. A step whose dependency failed or was rejected is skipped with the reason recorded.
+          Each tool call opens its own SQLite connection in WAL mode.
+        </p>
+        <p>
+          If a step is blocked or fails, the observe step sends the results back to the planner, which sees the
+          reason (for example "outside the 30-day apparel return window") and can choose an alternative such as a
+          goodwill coupon. A step identical to one that already ran is skipped, and refunds carry an idempotency key,
+          so replanning cannot act twice.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="approval">
+    <p class="section-label">Approvals</p>
+    <h2 id="approval">A paused run waits in a checkpoint</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          When a step needs a person, the graph stops at an interrupt and its full state is saved to SQLite under the
+          session ID. The operator can approve or reject each step, with a note, from the app or the command line;
+          the run then resumes where it stopped and records every decision in the audit log.
+        </p>
+      </div>
+    </div>
+    <Diagram
+      id="approval-sequence"
+      number={5}
+      caption="The approval sequence: the graph checkpoints at the interrupt, and the operator's decision resumes it."
+    />
+  </section>
+
+  <section class="section" aria-labelledby="memory">
+    <p class="section-label">Memory</p>
+    <h2 id="memory">Durable facts carry across sessions</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          After each turn a small model extracts durable facts, for example that a customer prefers store credit.
+          Memories are stored in SQLite with a uniqueness constraint, loaded at the start of later turns and passed
+          to the planner as citable evidence. A learned refund preference is also written to the customer record,
+          so a refund defaults to it in code even if the model forgets.
+        </p>
+      </div>
+    </div>
+    <p>Next: <a href="/safety">the rules that decide what may run</a>.</p>
+  </section>
+</Base>

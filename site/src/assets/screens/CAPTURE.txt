@@ -1,0 +1,2 @@
+Captured 2026-09-28T06:42:35.708Z from http://localhost:8504 (live mode: Provider: groq · Large model: openai/gpt-oss-120b · Small model: openai/gpt-oss-20b)
+Recaptured approval.png, approved-execution.png and parallel-execution.png 2026-09-28T06:48:11.976Z from http://localhost:8506 (live mode: Provider: groq · Large model: openai/gpt-oss-120b · Small model: openai/gpt-oss-20b); the other screenshots come from the full walkthrough.

@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+.env
+.lighthouse/
+test-results/
+# Generated on every build by scripts/build-assets.mjs (sources: ../brand, ../docs, src/lib/pages.json)
+scripts/.render.html
+src/generated/
+public/og/
+public/fonts/
+public/favicon.svg
+public/favicon-32.png
+public/apple-touch-icon.png
+public/icon-192.png
+public/icon-512.png
+public/site.webmanifest

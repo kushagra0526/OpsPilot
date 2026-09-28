@@ -1,0 +1,76 @@
+[
+  {
+    "slug": "",
+    "path": "/",
+    "nav": "Overview",
+    "title": "OpsPilot: a support agent whose rules are enforced in code",
+    "description": "OpsPilot is a support-operations agent for a fictional store. An LLM proposes each action; Python code decides risk, approvals and business rules before anything runs.",
+    "og": { "kicker": "Overview", "headline": "A support agent whose rules are enforced in code", "screen": "approval.png" }
+  },
+  {
+    "slug": "how-it-works",
+    "path": "/how-it-works",
+    "nav": "How it works",
+    "title": "How OpsPilot works: retrieval, planning, approval, execution",
+    "description": "The eleven-step LangGraph flow behind OpsPilot: parallel retrieval from four sources, a cited plan, code validation, human approval, parallel execution and replanning.",
+    "og": { "kicker": "How it works", "headline": "Eleven steps from request to explained action", "screen": "sources-superseded.png" }
+  },
+  {
+    "slug": "safety",
+    "path": "/safety",
+    "nav": "Safety",
+    "title": "OpsPilot safety: the model proposes, code enforces",
+    "description": "The risk rules, approval gate, business preconditions, citation checks and audit log that stop OpsPilot's model from acting outside policy, with a real audit excerpt.",
+    "og": { "kicker": "Safety", "headline": "The model proposes, code enforces", "screen": "injection-blocked.png" }
+  },
+  {
+    "slug": "evaluation",
+    "path": "/evaluation",
+    "nav": "Evaluation",
+    "title": "OpsPilot evaluation: live scenario results and held-out tests",
+    "description": "Scenario-by-scenario results for OpsPilot on the live Groq model and in scripted demo mode, with the held-out set, token costs and the free-tier limits that shaped the runs.",
+    "og": { "kicker": "Evaluation", "headline": "Scored scenario by scenario, check by check", "screen": "audit-log.png" }
+  },
+  {
+    "slug": "scenarios",
+    "path": "/scenarios",
+    "nav": "Scenarios",
+    "title": "OpsPilot demo scenarios: 12 prompts and what happened",
+    "description": "The twelve demo requests, from a simple policy question to a prompt injection, each with the exact prompt, the steps OpsPilot took and the checks it passed.",
+    "og": { "kicker": "Scenarios", "headline": "Twelve requests and what the agent did", "screen": "parallel-execution.png" }
+  },
+  {
+    "slug": "getting-started",
+    "path": "/getting-started",
+    "nav": "Getting started",
+    "title": "Run OpsPilot locally: setup, demo mode and commands",
+    "description": "Set up OpsPilot on your machine with a free Groq key: create the environment, seed the data, run the Streamlit app, or try the scripted demo mode without any key.",
+    "og": { "kicker": "Getting started", "headline": "Run it on your machine", "screen": "memory.png" }
+  },
+  {
+    "slug": "about",
+    "path": "/about",
+    "nav": "About",
+    "title": "About OpsPilot and its author, Kushagra Pratap Singh",
+    "description": "Why OpsPilot was built, what it demonstrates about keeping LLM agents inside policy, and how to reach its author, Kushagra Pratap Singh.",
+    "og": { "kicker": "About", "headline": "Why this agent was built", "screen": "conflict.png" }
+  },
+  {
+    "slug": "privacy",
+    "path": "/privacy",
+    "nav": "Privacy",
+    "footerOnly": true,
+    "title": "OpsPilot privacy notice: what the demo processes",
+    "description": "What OpsPilot and this site process: typed requests go to the LLM provider, all store data is fictional, and there are no accounts, cookies or analytics.",
+    "og": { "kicker": "Privacy", "headline": "What the demo processes, and what it does not", "screen": "audit-log.png", "position": "right top" }
+  },
+  {
+    "slug": "terms",
+    "path": "/terms",
+    "nav": "Terms",
+    "footerOnly": true,
+    "title": "OpsPilot terms of use for this portfolio demo",
+    "description": "Short terms for OpsPilot, a portfolio demonstration: fictional data, no warranty, no real transactions, and your own responsibility for API keys and provider terms.",
+    "og": { "kicker": "Terms", "headline": "Terms for a portfolio demonstration", "screen": "approved-execution.png" }
+  }
+]

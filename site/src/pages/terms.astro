@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import { AUTHOR } from "../lib/site";
+---
+
+<Base path="/terms">
+  <header class="page-head">
+    <p class="kicker">Terms</p>
+    <h1>Terms for a portfolio demonstration</h1>
+    <p class="lede">OpsPilot is a demonstration of an engineering approach. It is not a product or a service.</p>
+  </header>
+
+  <section class="section" aria-labelledby="terms">
+    <p class="section-label">Terms of use</p>
+    <h2 id="terms">Five points</h2>
+    <div class="prose">
+      <ol>
+        <li>
+          <strong>Demonstration only.</strong> OpsPilot and this site are provided to show how the project works. They
+          are not intended for handling real customers, orders or payments.
+        </li>
+        <li>
+          <strong>Fictional data.</strong> All store data is invented. No refund, cancellation, coupon or email in the
+          demo has any effect outside the local demo database.
+        </li>
+        <li>
+          <strong>No warranty.</strong> The software and the information on this site are provided as they are, without
+          any warranty, and the author is not liable for any use of them.
+        </li>
+        <li>
+          <strong>Your keys and providers.</strong> If you run the app in live mode, you use your own API keys and are
+          bound by the terms and limits of the model providers you configure. You are responsible for those keys and for
+          what you choose to type.
+        </li>
+        <li>
+          <strong>Reuse.</strong> No open-source license has been published for this project yet. Ask {AUTHOR.name}
+          before reusing its code or content. The bundled fonts are under the SIL Open Font License.
+        </li>
+      </ol>
+      <p>How data is handled is described in the <a href="/privacy">privacy notice</a>.</p>
+    </div>
+  </section>
+</Base>

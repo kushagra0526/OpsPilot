@@ -1,0 +1,206 @@
+---
+import Base from "../layouts/Base.astro";
+import ReportTable from "../components/ReportTable.astro";
+import { HOLDOUT, REPORTS, SCENARIOS } from "../lib/data";
+
+const full = REPORTS.main?.sections[0] ?? null;
+const partial = REPORTS.mainPartial?.sections[0] ?? null;
+const live = full ?? partial;
+const liveTable = live?.tables[0];
+const stability = full?.tables[1] ?? null;
+const holdout = REPORTS.holdout ?? REPORTS.holdoutPartial;
+const holdoutComplete = Boolean(REPORTS.holdout);
+const demo = REPORTS.mainDemo?.sections[0] ?? null;
+const tokenColumn = (t?: { head: string[]; rows: string[][] }) => {
+  const i = t?.head.indexOf("Tokens") ?? -1;
+  return i < 0 || !t ? [] : t.rows.map((r) => Number(r[i].replace(/,/g, ""))).filter((n) => n > 0);
+};
+const tokens = [...tokenColumn(full?.tables[0]), ...tokenColumn(holdout?.sections[0]?.tables[0])];
+const run = (s: typeof live) => (s?.meta.run ?? s?.meta.started ?? "").replace("T", " ");
+---
+
+<Base path="/evaluation">
+  <header class="page-head">
+    <p class="kicker">Evaluation</p>
+    <h1>Scored scenario by scenario, check by check</h1>
+    <p class="lede">
+      An automated harness runs each scenario through the same service the app uses, applies scripted approvals,
+      and checks what actually happened in the database and the audit log. This page reads its numbers directly
+      from the report files in <code>evals/</code>.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="method">
+    <p class="section-label">Method</p>
+    <h2 id="method">What counts as a pass</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          A scenario passes only if every one of its checks passes. Every scenario checks four things: the
+          decision type, that the expected tools actually executed, that approval was requested exactly when it
+          should be, and that forbidden tools never executed. Scenarios add their own checks where they matter:
+          citations of the right policy, detection of the stock conflict, a <code>refused</code> audit event, the
+          refund method and amount, the coupon limit, and that the email depends on the refund.
+        </p>
+        <p>
+          The data is reset before each scenario. A proposed step that code blocks does not count as executed, so
+          in the prompt-injection scenario a refund that is proposed and blocked still passes, as does an
+          escalation with no refund: either way no money moves.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: Sets">
+        <span class="note-label" aria-hidden="true">Sets</span>
+        {SCENARIOS.length} main scenarios from the brief, and {HOLDOUT.length} held-out scenarios written after
+        tuning and never tuned against.
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="live">
+    <p class="section-label">Live model</p>
+    <h2 id="live">{full ? "Full live runs" : "Latest live run"}</h2>
+    {
+      live && (
+        <dl class="facts">
+          <dt>Started</dt><dd>{run(live)}</dd>
+          <dt>Mode</dt><dd>{live.meta.mode}</dd>
+          <dt>Provider</dt><dd>{live.meta.provider}</dd>
+          <dt>Models</dt><dd>{live.meta.large} (planning and responses), {live.meta.small} (intent and memory)</dd>
+          {live.meta.code && (<><dt>Code</dt><dd class="mono">{live.meta.code}</dd></>)}
+          <dt>Result</dt><dd>{live.headline}</dd>
+        </dl>
+      )
+    }
+    <div class="row">
+      <div class="prose">
+        {
+          full ? (
+            <p>
+              The first run below is shown in full; the stability table repeats all scenarios on the same code.
+              {full.perRun && ` Per run: ${full.perRun}.`}
+            </p>
+          ) : (
+            <p>
+              A complete run of all {SCENARIOS.length} scenarios on the live model has not finished yet. The run
+              below stopped when the provider's free daily token quota ran out. During tuning each scenario also
+              passed individually, one on the Gemini fallback and the rest on Groq, but those runs were on earlier
+              code and are not counted here.
+            </p>
+          )
+        }
+      </div>
+      <aside class="note" aria-label="Side note: Why runs stop">
+        <span class="note-label" aria-hidden="true">Why runs stop</span>
+        Groq's free tier allows 200,000 tokens per day for the planning model, and the harness stops cleanly when
+        that quota is spent, keeping every result it has.
+      </aside>
+    </div>
+    {liveTable && <ReportTable table={liveTable} label="Live results per scenario" caption={`Source: ${full ? REPORTS.main!.file : REPORTS.mainPartial!.file}`} drop={["Failed checks"]} />}
+    {stability && <ReportTable table={stability} label="Stability across live runs" caption="Each column is one complete run of all scenarios on the same code." />}
+  </section>
+
+  <section class="section" aria-labelledby="holdout">
+    <p class="section-label">Held out</p>
+    <h2 id="holdout">Scenarios the prompts were never tuned on</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          After tuning finished, {HOLDOUT.length} new scenarios were written to test whether the fixes generalise:
+          boundaries, requests the store must refuse, requests that span two orders, and rules not exercised by
+          the main set. The first run is recorded before any change; afterwards, only genuine bugs may be fixed.
+        </p>
+      </div>
+      {
+        tokens.length > 0 && (
+          <aside class="note" aria-label="Side note: Cost per scenario">
+            <span class="note-label" aria-hidden="true">Cost per scenario</span>
+            Measured: {tokens.map((t) => t.toLocaleString("en-US")).join(", ")} tokens per scenario across all
+            model calls, most of them on the planning model.
+          </aside>
+        )
+      }
+    </div>
+    <section class="table-scroll" aria-label="Held-out scenarios" tabindex="0">
+      <table>
+        <caption>The held-out set, from evals/holdout.yaml.</caption>
+        <thead><tr><th scope="col">#</th><th scope="col">Scenario</th><th scope="col">Prompt</th></tr></thead>
+        <tbody>
+          {HOLDOUT.map((h) => (
+            <tr><td class="mono">{h.id}</td><td>{h.name}</td><td>{h.turns[h.turns.length - 1].input}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+    {
+      holdout &&
+        holdout.sections.map((sec) => (
+          <>
+            <h3>{sec.title}</h3>
+            <p>
+              {sec.headline}.
+              {!holdoutComplete && " The remaining held-out scenarios have not run yet."}
+            </p>
+            {sec.tables[0] && (
+              <ReportTable table={sec.tables[0]} label={`Held-out results: ${sec.title}`} caption={`Source: ${holdout.file}`} drop={["Failed checks"]} />
+            )}
+          </>
+        ))
+    }
+  </section>
+
+  {
+    demo && (
+      <section class="section" aria-labelledby="harness">
+        <p class="section-label">Harness check</p>
+        <h2 id="harness">The harness itself, in scripted demo mode</h2>
+        <div class="row">
+          <div class="prose">
+            <p>
+              Demo mode replaces the model's text with scripted outputs derived from the real prompt and evidence.
+              Retrieval, risk, approvals, preconditions, grounding, execution and the audit log all run for real.
+              These runs prove the harness and the safety layer, not the model's planning quality.
+            </p>
+            <p>{demo.headline}{demo.perRun && `. Per run: ${demo.perRun}`}.</p>
+          </div>
+        </div>
+        {demo.tables[1] && (
+          <ReportTable table={demo.tables[1]} label="Demo-mode stability" caption={`Source: ${REPORTS.mainDemo!.file}`} />
+        )}
+      </section>
+    )
+  }
+
+  <section class="section" aria-labelledby="tuning">
+    <p class="section-label">Tuning</p>
+    <h2 id="tuning">What changed while tuning on the live model</h2>
+    <div class="row">
+      <div class="prose">
+        <p>No code-level safety rule was loosened to make a scenario pass. The fixes were:</p>
+        <ul>
+          <li>
+            The model assumed "uncomfortable" earbuds had been opened, which the data never records. A prompt rule
+            now forbids inferring item condition, and Return Policy v2 §4 states that the warehouse, not support,
+            inspects condition.
+          </li>
+          <li>
+            The model escalated a refund over $200 because it needed approval. The prompt now says to propose the
+            action; the system pauses it for a person.
+          </li>
+          <li>
+            A redundant status update after a refund failed and triggered a needless replan. Tool descriptions now
+            say that refunds and cancellations set the status themselves.
+          </li>
+          <li>
+            A superseded policy section was retrieved without its replacement. Retrieval now fetches the current
+            counterpart of every superseded chunk.
+          </li>
+          <li>
+            An exchange blocked by a missing delivery date was answered instead of escalated. The prompt now requires
+            escalation when missing data blocks an order action.
+          </li>
+        </ul>
+        <p>Every decision, including these, is recorded in <code>DECISIONS.md</code> in the repository.</p>
+      </div>
+    </div>
+  </section>
+</Base>

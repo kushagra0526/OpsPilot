@@ -1,0 +1,18 @@
+---
+// A Mermaid diagram from docs/architecture.md, rendered to static SVG at build time.
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+interface Props {
+  id: "agent-graph" | "knowledge" | "approval-sequence";
+  number: number;
+  caption: string;
+}
+const { id, number, caption } = Astro.props;
+const svg = readFileSync(path.join(process.cwd(), "src", "generated", `diagram-${id}.svg`), "utf8");
+---
+
+<figure>
+  <div class="diagram" set:html={svg} />
+  <figcaption><span class="fig">Figure {number}</span>{caption}</figcaption>
+</figure>

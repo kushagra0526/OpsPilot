@@ -1,0 +1,53 @@
+---
+import Base from "../layouts/Base.astro";
+import { AUTHOR } from "../lib/site";
+---
+
+<Base path="/about">
+  <header class="page-head">
+    <p class="kicker">About</p>
+    <h1>Why this agent was built</h1>
+    <p class="lede">
+      OpsPilot is a portfolio project by {AUTHOR.name}. It answers one question: how do you let a language model act
+      on real business systems without trusting it with the rules?
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="why">
+    <p class="section-label">The question</p>
+    <h2 id="why">Agents that act, inside limits they cannot talk their way past</h2>
+    <div class="row">
+      <div class="prose">
+        <p>
+          The project began as an engineering brief: build an autonomous agent that answers only from internal
+          knowledge, decides on actions, executes them, explains itself, and asks a person before anything critical.
+          Most of those requirements are easy to meet with a capable model and a long prompt. The hard part is making
+          them hold when the model is wrong, the data is incomplete, or the request is hostile.
+        </p>
+        <p>
+          OpsPilot's answer is to keep every rule that matters in code. The model reads the evidence and writes a
+          plan; deterministic checks decide what may run. That split is visible throughout: in the
+          <a href="/safety">safety layers</a>, in the <a href="/how-it-works">agent graph</a>, and in the
+          <a href="/evaluation">evaluation</a>, where a blocked action counts as a success.
+        </p>
+      </div>
+      <aside class="note" aria-label="Side note: Constraints">
+        <span class="note-label" aria-hidden="true">Constraints</span>
+        Everything runs on free tiers: Groq for the model, local ONNX embeddings, Chroma, SQLite and Streamlit.
+        That limit shaped several decisions, from compact prompts to the evaluation schedule.
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="author">
+    <p class="section-label">Author</p>
+    <h2 id="author">{AUTHOR.name}</h2>
+    <div class="prose">
+      <p>Profiles for contact and other work:</p>
+      <ul class="links-row">
+        <li><a href={AUTHOR.linkedin} rel="me">LinkedIn: kushagra-pratap-singh</a></li>
+        <li><a href={AUTHOR.github} rel="me">GitHub: kushagra0526</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>

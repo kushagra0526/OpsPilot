@@ -1,0 +1,992 @@
+{
+  "approval": {
+    "session": "sess-dda171",
+    "input": "Process a full refund for ORD-1001, the laptop has a dead pixel.",
+    "at": "2026-09-28T12:05:35",
+    "outcome": {
+      "session_id": "sess-dda171",
+      "turn_id": "d00fc89b",
+      "status": "completed",
+      "final_response": "## 1. What was found  \n- **Order details:** ORD-1001 was delivered on 2026-09-22 (5 days ago) and the total paid was **$1299.00** with no prior refunds — refundable amount $1299.00[Order ORD-1001].  \n- **Return eligibility:** The laptop is an electronic product, so the 14-day return window applies and the request is within it[Return Policy v2 §2].  \n- **Defect qualification:** The reported dead pixel qualifies as a defect, which permits the return of an opened electronic item[Return Policy v2 §4].  \n- **Refund size:** The requested refund exceeds $200, which normally requires manager approval[Refund Policy §3].  \n\n## 2. What was done  \n- **Refund issued:** **$1299.00** was refunded to the original payment method (card). *Executed* (step s1).  \n- **Customer notified:** An email confirming the refund was sent to **aarav.mehta@example.com**. *Executed* (step s2).  \n\nNo denial was required; the action proceeded after the system handled the necessary approval step.\n\n## 3. Why  \n- The return window and defect status satisfy the return policy for electronics[Return Policy v2 §2][Return Policy v2 §4].  \n- The refund amount does not exceed the order total, complying with the limit rule[Refund Policy §4].  \n- Refunds are required to be paid to the original payment method unless a preference is recorded, which matches the action taken[Refund Policy §2].  \n- Sending a confirmation email is mandated for every refund[Refund Policy §6].",
+      "decision": {
+        "decision_type": "act",
+        "analysis": "The order ORD-1001 is delivered (delivery_date 2026-09-22) and today is 2026-09-27, so it is within the 14‑day return window for electronics [policy:return_policy_v2§2]. The laptop is reported to have a dead pixel, which qualifies as a defect, and opened electronics are accepted when defective [policy:return_policy_v2§4]. The order total is $1299.00 with no prior refunds, so the refundable remaining amount is $1299.00 [db:orders:ORD-1001]. This amount exceeds $200, therefore a manager approval is required, but the system will pause the action for approval automatically [policy:refund_policy§3]. The refund does not exceed the order total, satisfying the limit rule [policy:refund_policy§4]. The customer's preferred refund method is not recorded, so we will use the original payment method as default [policy:refund_policy§2].",
+        "conflicts_considered": [],
+        "missing_information": [],
+        "steps": [
+          {
+            "id": "s1",
+            "tool": "issue_refund",
+            "args": {
+              "order_id": "ORD-1001",
+              "amount": 1299.0,
+              "reason": "Dead pixel on laptop"
+            },
+            "depends_on": [],
+            "rationale": "Refund the full order amount for a defective electronic item within the return window; amount is within order total and requires manager approval which the system will enforce automatically [policy:return_policy_v2§2][policy:return_policy_v2§4][policy:refund_policy§3][policy:refund_policy§4][db:orders:ORD-1001]",
+            "citations": [
+              "policy:return_policy_v2§2",
+              "policy:return_policy_v2§4",
+              "policy:refund_policy§3",
+              "policy:refund_policy§4",
+              "db:orders:ORD-1001"
+            ],
+            "expected_outcome": "Refund of $1299.00 issued (pending manager approval) and order status set to refunded"
+          },
+          {
+            "id": "s2",
+            "tool": "send_customer_email",
+            "args": {
+              "customer_id": "C-001",
+              "subject": "Your refund for order ORD-1001",
+              "body": "Dear Aarav Mehta,\n\nWe have processed a refund of $1299.00 for your order ORD-1001 due to the reported dead pixel on the Nova 14 Laptop. The refund will be returned to your original payment method (card) and should appear within 5–7 business days.\n\nIf you have any further questions, please let us know.\n\nBest regards,\nNovaMart Support"
+            },
+            "depends_on": [
+              "s1"
+            ],
+            "rationale": "Policy requires a confirmation email after every refund, stating amount, method, and timing [policy:refund_policy§6][policy:refund_policy§2]",
+            "citations": [
+              "policy:refund_policy§6",
+              "policy:refund_policy§2"
+            ],
+            "expected_outcome": "Customer receives a confirmation email about the refund"
+          }
+        ],
+        "answer_draft": null,
+        "confidence": 0.99
+      },
+      "plan_history": [
+        {
+          "iteration": 1,
+          "decision": {
+            "decision_type": "act",
+            "analysis": "The order ORD-1001 is delivered (delivery_date 2026-09-22) and today is 2026-09-27, so it is within the 14‑day return window for electronics [policy:return_policy_v2§2]. The laptop is reported to have a dead pixel, which qualifies as a defect, and opened electronics are accepted when defective [policy:return_policy_v2§4]. The order total is $1299.00 with no prior refunds, so the refundable remaining amount is $1299.00 [db:orders:ORD-1001]. This amount exceeds $200, therefore a manager approval is required, but the system will pause the action for approval automatically [policy:refund_policy§3]. The refund does not exceed the order total, satisfying the limit rule [policy:refund_policy§4]. The customer's preferred refund method is not recorded, so we will use the original payment method as default [policy:refund_policy§2].",
+            "conflicts_considered": [],
+            "missing_information": [],
+            "steps": [
+              {
+                "id": "s1",
+                "tool": "issue_refund",
+                "args": {
+                  "order_id": "ORD-1001",
+                  "amount": 1299.0,
+                  "reason": "Dead pixel on laptop"
+                },
+                "depends_on": [],
+                "rationale": "Refund the full order amount for a defective electronic item within the return window; amount is within order total and requires manager approval which the system will enforce automatically [policy:return_policy_v2§2][policy:return_policy_v2§4][policy:refund_policy§3][policy:refund_policy§4][db:orders:ORD-1001]",
+                "citations": [
+                  "policy:return_policy_v2§2",
+                  "policy:return_policy_v2§4",
+                  "policy:refund_policy§3",
+                  "policy:refund_policy§4",
+                  "db:orders:ORD-1001"
+                ],
+                "expected_outcome": "Refund of $1299.00 issued (pending manager approval) and order status set to refunded"
+              },
+              {
+                "id": "s2",
+                "tool": "send_customer_email",
+                "args": {
+                  "customer_id": "C-001",
+                  "subject": "Your refund for order ORD-1001",
+                  "body": "Dear Aarav Mehta,\n\nWe have processed a refund of $1299.00 for your order ORD-1001 due to the reported dead pixel on the Nova 14 Laptop. The refund will be returned to your original payment method (card) and should appear within 5–7 business days.\n\nIf you have any further questions, please let us know.\n\nBest regards,\nNovaMart Support"
+                },
+                "depends_on": [
+                  "s1"
+                ],
+                "rationale": "Policy requires a confirmation email after every refund, stating amount, method, and timing [policy:refund_policy§6][policy:refund_policy§2]",
+                "citations": [
+                  "policy:refund_policy§6",
+                  "policy:refund_policy§2"
+                ],
+                "expected_outcome": "Customer receives a confirmation email about the refund"
+              }
+            ],
+            "answer_draft": null,
+            "confidence": 0.99
+          }
+        }
+      ],
+      "pending_approvals": [],
+      "risk_assessments": {
+        "s1": {
+          "level": "high",
+          "requires_approval": true,
+          "reasons": [
+            "$1,299.00 exceeds the $200 auto-refund limit (Refund Policy §3)",
+            "refunds are irreversible"
+          ]
+        },
+        "s2": {
+          "level": "low",
+          "requires_approval": false,
+          "reasons": [
+            "base risk low; not reversible"
+          ]
+        }
+      },
+      "step_results": [
+        {
+          "step_id": "s1",
+          "status": "executed",
+          "output": {
+            "ok": true,
+            "summary": "Refunded $1299.00 for ORD-1001 to the original payment method; order is now refunded",
+            "data": {
+              "refund_id": 2,
+              "amount": 1299.0,
+              "method": "original",
+              "order_status": "refunded",
+              "coupon": null,
+              "approved_by": "operator-1"
+            }
+          },
+          "error": null,
+          "tool": "issue_refund",
+          "args": {
+            "order_id": "ORD-1001",
+            "amount": 1299.0,
+            "reason": "Dead pixel on laptop"
+          },
+          "iteration": 1,
+          "started_at": 1790577339.3253598,
+          "finished_at": 1790577339.3769577
+        },
+        {
+          "step_id": "s2",
+          "status": "executed",
+          "output": {
+            "ok": true,
+            "summary": "Emailed aarav.mehta@example.com: 'Your refund for order ORD-1001'",
+            "data": {
+              "outbox_id": 2,
+              "to_email": "aarav.mehta@example.com"
+            }
+          },
+          "error": null,
+          "tool": "send_customer_email",
+          "args": {
+            "customer_id": "C-001",
+            "subject": "Your refund for order ORD-1001",
+            "body": "Dear Aarav Mehta,\n\nWe have processed a refund of $1299.00 for your order ORD-1001 due to the reported dead pixel on the Nova 14 Laptop. The refund will be returned to your original payment method (card) and should appear within 5–7 business days.\n\nIf you have any further questions, please let us know.\n\nBest regards,\nNovaMart Support"
+          },
+          "iteration": 1,
+          "started_at": 1790577339.392003,
+          "finished_at": 1790577339.4150598
+        }
+      ],
+      "trace": [
+        {
+          "node": "understand",
+          "ts": "2026-09-28T12:05:06.754",
+          "summary": "action: ORD-1001",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "load_memory",
+          "ts": "2026-09-28T12:05:06.767",
+          "summary": "2 memories loaded",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "retrieve",
+          "ts": "2026-09-28T12:05:08.394",
+          "summary": "17 evidence items {'policy': 8, 'faq': 3, 'db': 3, 'csv': 1, 'memory': 2}, 0 conflicts, 0 missing, in 1.62s",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "reason_and_plan",
+          "ts": "2026-09-28T12:05:35.242",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 1 after 24.0s",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "reason_and_plan",
+          "ts": "2026-09-28T12:05:35.242",
+          "summary": "iteration 1: act, 2 steps, confidence 0.99",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "validate",
+          "ts": "2026-09-28T12:05:35.304",
+          "summary": "act: 2 steps proposed, 0 blocked by preconditions",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "approval_gate",
+          "ts": "2026-09-28T12:05:35.320",
+          "summary": "1 step(s) need human approval",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "await_approval",
+          "ts": "2026-09-28T12:05:39.321",
+          "summary": "s1 approved by operator-1",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "execute",
+          "ts": "2026-09-28T12:05:39.429",
+          "summary": "s1:issue_refund=executed, s2:send_customer_email=executed",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "observe",
+          "ts": "2026-09-28T12:05:39.431",
+          "summary": "all steps settled; responding",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:05:51.089",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 1 after 3.0s",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:05:51.089",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 2 after 6.0s",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:05:51.089",
+          "summary": "1445 chars",
+          "turn_id": "d00fc89b"
+        },
+        {
+          "node": "save_memory",
+          "ts": "2026-09-28T12:05:51.662",
+          "summary": "1 new memories",
+          "turn_id": "d00fc89b"
+        }
+      ],
+      "conflicts": [],
+      "missing": [],
+      "evidence_used": [
+        {
+          "id": "policy:return_policy_v2§2",
+          "source_type": "policy",
+          "content": "Return windows depend on the product category. Electronics (laptops, headphones, earbuds, accessories and other devices) may be returned within 14 days of delivery. Apparel and home goods may be returned within 30 days of delivery. Windows are counted in calendar days from the delivery date recorded on the order.",
+          "metadata": {
+            "category": "returns",
+            "effective_date": "2026-03-01",
+            "version": 2,
+            "doc_id": "return_policy_v2",
+            "supersedes": "return_policy_v1",
+            "title": "Return Policy",
+            "section_title": "Return windows by category",
+            "section": "2",
+            "label": "Return Policy v2 §2",
+            "similarity": 0.5065
+          },
+          "superseded": false,
+          "label": "Return Policy v2 §2"
+        },
+        {
+          "id": "policy:return_policy_v2§4",
+          "source_type": "policy",
+          "content": "Apparel and home goods must be unused, with original tags and packaging. Opened electronics are accepted only if they are defective, for example a dead pixel, a faulty battery or a device that does not power on. Unopened electronics in their sealed packaging are accepted for any reason inside the 14-day window. Item condition is inspected by the warehouse when the return arrives; support operators do not decide condition. At the support stage, a return request inside the category window is approved and refunded unless the customer states that a non-defective electronic item has been opened or used.",
+          "metadata": {
+            "section_title": "Condition of returned items",
+            "supersedes": "return_policy_v1",
+            "version": 2,
+            "category": "returns",
+            "title": "Return Policy",
+            "doc_id": "return_policy_v2",
+            "effective_date": "2026-03-01",
+            "section": "4",
+            "label": "Return Policy v2 §4",
+            "similarity": 0.5399
+          },
+          "superseded": false,
+          "label": "Return Policy v2 §4"
+        },
+        {
+          "id": "db:orders:ORD-1001",
+          "source_type": "db",
+          "content": "Order ORD-1001: customer C-001, status delivered, order_date 2026-09-17, delivery_date 2026-09-22 (5 days ago), total $1299.00, paid by card. Items: 1x EL-LAP-01 Nova 14 Laptop (category electronics) @ $1299.00. Prior refunds: none. Refundable remaining: $1299.00.",
+          "metadata": {
+            "table": "orders",
+            "computed": {
+              "days_since_delivery": 5,
+              "promise_date": "2026-09-24",
+              "days_past_promise": null,
+              "refunded_so_far": 0,
+              "refundable_remaining": 1299.0
+            },
+            "status": "delivered"
+          },
+          "superseded": false,
+          "label": "Order ORD-1001"
+        },
+        {
+          "id": "policy:refund_policy§3",
+          "source_type": "policy",
+          "content": "Refunds of $200 or less may be processed by the support agent directly without further approval. Refunds greater than $200 require approval from a support manager before they are issued. The approval, the approver's name and any note must be recorded with the refund.",
+          "metadata": {
+            "supersedes": "",
+            "effective_date": "2026-03-01",
+            "category": "refunds",
+            "title": "Refund Policy",
+            "section_title": "Approval limits",
+            "version": 1,
+            "section": "3",
+            "doc_id": "refund_policy",
+            "label": "Refund Policy §3",
+            "similarity": 0.7354
+          },
+          "superseded": false,
+          "label": "Refund Policy §3"
+        },
+        {
+          "id": "policy:refund_policy§4",
+          "source_type": "policy",
+          "content": "A refund can never exceed the order total minus all refunds previously issued for the same order. Requests that exceed this amount must not be processed; they are treated as suspicious and handled under the Escalation SOP.",
+          "metadata": {
+            "supersedes": "",
+            "effective_date": "2026-03-01",
+            "title": "Refund Policy",
+            "doc_id": "refund_policy",
+            "version": 1,
+            "section_title": "Maximum refundable amount",
+            "category": "refunds",
+            "section": "4",
+            "label": "Refund Policy §4",
+            "similarity": 0.7392
+          },
+          "superseded": false,
+          "label": "Refund Policy §4"
+        },
+        {
+          "id": "policy:refund_policy§2",
+          "source_type": "policy",
+          "content": "Refunds are paid to the original payment method used for the order (card, UPI or wallet). If the customer prefers, the refund may instead be issued as store credit, delivered as a NovaMart credit coupon worth the refunded amount. Operators must respect a customer's recorded preference for store credit when one exists, and must state the refund method in the confirmation email.",
+          "metadata": {
+            "effective_date": "2026-03-01",
+            "version": 1,
+            "title": "Refund Policy",
+            "supersedes": "",
+            "section": "2",
+            "category": "refunds",
+            "section_title": "Refund methods",
+            "doc_id": "refund_policy",
+            "label": "Refund Policy §2",
+            "similarity": 0.2499
+          },
+          "superseded": false,
+          "label": "Refund Policy §2"
+        },
+        {
+          "id": "policy:refund_policy§6",
+          "source_type": "policy",
+          "content": "Refunds to the original payment method typically appear within 5–7 business days. Store credit is available immediately. Every refund must be followed by a confirmation email to the customer stating the amount, the method and the expected timing.",
+          "metadata": {
+            "doc_id": "refund_policy",
+            "supersedes": "",
+            "version": 1,
+            "section": "6",
+            "title": "Refund Policy",
+            "effective_date": "2026-03-01",
+            "section_title": "Timing and confirmation",
+            "category": "refunds",
+            "label": "Refund Policy §6",
+            "similarity": 0.2682
+          },
+          "superseded": false,
+          "label": "Refund Policy §6"
+        }
+      ],
+      "usage": {
+        "turn": {
+          "requests": 4,
+          "input_tokens": 5565,
+          "output_tokens": 2167,
+          "retries": 3,
+          "by_node": {
+            "understand": 1,
+            "reason_and_plan": 1,
+            "respond": 1,
+            "save_memory": 1
+          },
+          "tokens_by_tier": {
+            "small": 1010,
+            "large": 6722
+          }
+        },
+        "session": {
+          "requests": 4,
+          "input_tokens": 5565,
+          "output_tokens": 2167,
+          "retries": 3,
+          "by_node": {
+            "understand": 1,
+            "reason_and_plan": 1,
+            "respond": 1,
+            "save_memory": 1
+          },
+          "tokens_by_tier": {
+            "small": 1010,
+            "large": 6722
+          }
+        },
+        "model": {
+          "provider": "groq",
+          "large": "openai/gpt-oss-120b",
+          "small": "openai/gpt-oss-20b"
+        }
+      }
+    },
+    "audit": [
+      {
+        "ts": "2026-09-28T12:05:35.251",
+        "event": "proposed",
+        "tool": "issue_refund",
+        "risk_level": "high",
+        "actor": "agent",
+        "rationale": "Refund the full order amount for a defective electronic item within the return window; amount is within order total and requires manager approval which the system will enforce automatically [policy:return_policy_v2§2][policy:return_policy_v2§4][policy:refund_policy§3][policy:refund_policy§4][db:orders:ORD-1001]"
+      },
+      {
+        "ts": "2026-09-28T12:05:35.288",
+        "event": "proposed",
+        "tool": "send_customer_email",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Policy requires a confirmation email after every refund, stating amount, method, and timing [policy:refund_policy§6][policy:refund_policy§2]"
+      },
+      {
+        "ts": "2026-09-28T12:05:35.311",
+        "event": "approval_requested",
+        "tool": "issue_refund",
+        "risk_level": "high",
+        "actor": "agent",
+        "rationale": "$1,299.00 exceeds the $200 auto-refund limit (Refund Policy §3); refunds are irreversible"
+      },
+      {
+        "ts": "2026-09-28T12:05:39.311",
+        "event": "approved",
+        "tool": "issue_refund",
+        "risk_level": "high",
+        "actor": "operator-1",
+        "rationale": "Photo of the dead pixel checked"
+      },
+      {
+        "ts": "2026-09-28T12:05:39.382",
+        "event": "executed",
+        "tool": "issue_refund",
+        "risk_level": "high",
+        "actor": "agent",
+        "rationale": "Refund the full order amount for a defective electronic item within the return window; amount is within order total and requires manager approval which the system will enforce automatically [policy:return_policy_v2§2][policy:return_policy_v2§4][policy:refund_policy§3][policy:refund_policy§4][db:orders:ORD-1001]"
+      },
+      {
+        "ts": "2026-09-28T12:05:39.420",
+        "event": "executed",
+        "tool": "send_customer_email",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Policy requires a confirmation email after every refund, stating amount, method, and timing [policy:refund_policy§6][policy:refund_policy§2]"
+      }
+    ]
+  },
+  "conflict": {
+    "session": "sess-a7ed36",
+    "input": "Customer wants to exchange ORD-1004's earbuds for a new pair. Is EL-HP-02 in stock?",
+    "at": "2026-09-28T12:09:37",
+    "outcome": {
+      "session_id": "sess-a7ed36",
+      "turn_id": "5961e8fb",
+      "status": "completed",
+      "final_response": "**1. What was found**\n\n- **Order ORD-1004** – status *delivered* but **delivery_date is NOT RECORDED**, so return eligibility cannot be determined. [Order ORD-1004]  \n- **Stock for EL-HP-02** – CSV warehouse feed (2026-09-26) shows **0 units** (newer than DB record of 5). [Product record EL-HP-02] [Warehouse feed EL-HP-02]  \n- **Exchange policy** – NovaMart requires a return for refund before a new purchase; direct exchanges are not automatic. [FAQ faq-14]  \n\n**2. What was done (or not done) and why**\n\n- **Escalated** the case to a human specialist – created high-priority ticket **TKT-KSKJ**.  \n  - Reason: *“required data is missing from the order … no delivery date is recorded, so return eligibility cannot be determined”* [Escalation SOP §2] and *“no … irreversible action may be taken until a human agent has reviewed the case”* [Escalation SOP §4].  \n- **Sent a customer email** to aarav.mehta@example.com informing them that the earbuds are out of stock and that the exchange request has been escalated. [step s2]  \n\n**No exchange or refund was processed** because the missing delivery date blocks eligibility and the item is out of stock, per the escalation SOP and exchange FAQ.  \n\n**3. Why**\n\n- Missing delivery date prevents eligibility assessment → escalation required [Escalation SOP §2].  \n- Contradictory/insufficient data bars any irreversible action until a human reviews [Escalation SOP §4].  \n- Direct exchanges are not supported; a return-then-new-order flow is needed, but the product is currently unavailable [FAQ faq-14].  \n- The freshest inventory source (CSV feed) shows zero stock, confirming out-of-stock status [Warehouse feed EL-HP-02].",
+      "decision": {
+        "decision_type": "act",
+        "analysis": "The customer wants to exchange the earbuds from order ORD-1004 and asks about stock for EL-HP-02. The order record [db:orders:ORD-1004] shows status delivered but delivery_date is NOT RECORDED, so return eligibility cannot be determined. Per escalation policy, missing required data mandates escalation before any irreversible action [policy:escalation_sop§2][policy:escalation_sop§4]. Exchange is not a direct operation; NovaMart requires a return for refund then a new order [faq:faq-14]. Stock information for EL-HP-02 is conflicting: DB shows 5 units (2026-09-20) but the CSV warehouse feed (2026-09-26) shows 0, which is fresher and therefore authoritative [db:products:EL-HP-02][csv:inventory:EL-HP-02]. Thus the item is out of stock. The appropriate response is to inform the customer of the out‑of‑stock status and that we must escalate the exchange request due to the missing delivery date.",
+        "conflicts_considered": [
+          "Return Policy v1 is superseded by v2 and not applied.",
+          "Inventory conflict resolved by using the fresher CSV feed, resulting in stock 0."
+        ],
+        "missing_information": [
+          "delivery_date for order ORD-1004"
+        ],
+        "steps": [
+          {
+            "id": "s1",
+            "tool": "escalate_to_human",
+            "args": {
+              "summary": "Exchange request for order ORD-1004 cannot be processed due to missing delivery date; also EL-HP-02 is out of stock.",
+              "priority": "high",
+              "customer_id": "C-001",
+              "order_id": "ORD-1004"
+            },
+            "depends_on": [],
+            "rationale": "Missing delivery date prevents return eligibility; policy requires escalation before any action [policy:escalation_sop§2][policy:escalation_sop§4].",
+            "citations": [
+              "db:orders:ORD-1004",
+              "policy:escalation_sop§2",
+              "policy:escalation_sop§4"
+            ],
+            "expected_outcome": "A human specialist will be notified to review the case."
+          },
+          {
+            "id": "s2",
+            "tool": "send_customer_email",
+            "args": {
+              "customer_id": "C-001",
+              "subject": "Exchange request and stock update",
+              "body": "Dear Aarav,\n\nThank you for contacting NovaMart. We have checked the stock for model EL-HP-02 (Nova Buds Pro) and, according to our latest warehouse feed, it is currently out of stock.\n\nRegarding your request to exchange the earbuds from order ORD-1004, we are unable to process the exchange at this time because the delivery date for that order is missing from our records, which prevents us from confirming return eligibility. We have escalated this case to a specialist who will review the details and contact you within one business day.\n\nWe appreciate your patience.\n\nBest regards,\nNovaMart Support Team"
+            },
+            "depends_on": [
+              "s1"
+            ],
+            "rationale": "Inform the customer of stock status and that the case has been escalated; email is sent after escalation step.",
+            "citations": [
+              "csv:inventory:EL-HP-02",
+              "db:products:EL-HP-02",
+              "faq:faq-14"
+            ],
+            "expected_outcome": "Customer receives an email with the stock update and escalation notice."
+          }
+        ],
+        "answer_draft": null,
+        "confidence": 0.97
+      },
+      "plan_history": [
+        {
+          "iteration": 1,
+          "decision": {
+            "decision_type": "act",
+            "analysis": "The customer wants to exchange the earbuds from order ORD-1004 and asks about stock for EL-HP-02. The order record [db:orders:ORD-1004] shows status delivered but delivery_date is NOT RECORDED, so return eligibility cannot be determined. Per escalation policy, missing required data mandates escalation before any irreversible action [policy:escalation_sop§2][policy:escalation_sop§4]. Exchange is not a direct operation; NovaMart requires a return for refund then a new order [faq:faq-14]. Stock information for EL-HP-02 is conflicting: DB shows 5 units (2026-09-20) but the CSV warehouse feed (2026-09-26) shows 0, which is fresher and therefore authoritative [db:products:EL-HP-02][csv:inventory:EL-HP-02]. Thus the item is out of stock. The appropriate response is to inform the customer of the out‑of‑stock status and that we must escalate the exchange request due to the missing delivery date.",
+            "conflicts_considered": [
+              "Return Policy v1 is superseded by v2 and not applied.",
+              "Inventory conflict resolved by using the fresher CSV feed, resulting in stock 0."
+            ],
+            "missing_information": [
+              "delivery_date for order ORD-1004"
+            ],
+            "steps": [
+              {
+                "id": "s1",
+                "tool": "escalate_to_human",
+                "args": {
+                  "summary": "Exchange request for order ORD-1004 cannot be processed due to missing delivery date; also EL-HP-02 is out of stock.",
+                  "priority": "high",
+                  "customer_id": "C-001",
+                  "order_id": "ORD-1004"
+                },
+                "depends_on": [],
+                "rationale": "Missing delivery date prevents return eligibility; policy requires escalation before any action [policy:escalation_sop§2][policy:escalation_sop§4].",
+                "citations": [
+                  "db:orders:ORD-1004",
+                  "policy:escalation_sop§2",
+                  "policy:escalation_sop§4"
+                ],
+                "expected_outcome": "A human specialist will be notified to review the case."
+              },
+              {
+                "id": "s2",
+                "tool": "send_customer_email",
+                "args": {
+                  "customer_id": "C-001",
+                  "subject": "Exchange request and stock update",
+                  "body": "Dear Aarav,\n\nThank you for contacting NovaMart. We have checked the stock for model EL-HP-02 (Nova Buds Pro) and, according to our latest warehouse feed, it is currently out of stock.\n\nRegarding your request to exchange the earbuds from order ORD-1004, we are unable to process the exchange at this time because the delivery date for that order is missing from our records, which prevents us from confirming return eligibility. We have escalated this case to a specialist who will review the details and contact you within one business day.\n\nWe appreciate your patience.\n\nBest regards,\nNovaMart Support Team"
+                },
+                "depends_on": [
+                  "s1"
+                ],
+                "rationale": "Inform the customer of stock status and that the case has been escalated; email is sent after escalation step.",
+                "citations": [
+                  "csv:inventory:EL-HP-02",
+                  "db:products:EL-HP-02",
+                  "faq:faq-14"
+                ],
+                "expected_outcome": "Customer receives an email with the stock update and escalation notice."
+              }
+            ],
+            "answer_draft": null,
+            "confidence": 0.97
+          }
+        }
+      ],
+      "pending_approvals": [],
+      "risk_assessments": {
+        "s1": {
+          "level": "low",
+          "requires_approval": false,
+          "reasons": [
+            "base risk low; reversible"
+          ]
+        },
+        "s2": {
+          "level": "low",
+          "requires_approval": false,
+          "reasons": [
+            "base risk low; not reversible"
+          ]
+        }
+      },
+      "step_results": [
+        {
+          "step_id": "s1",
+          "status": "executed",
+          "output": {
+            "ok": true,
+            "summary": "Escalated to a human agent: high-priority ticket TKT-KSKJ",
+            "data": {
+              "ticket_id": "TKT-KSKJ",
+              "category": "escalation",
+              "priority": "high"
+            }
+          },
+          "error": null,
+          "tool": "escalate_to_human",
+          "args": {
+            "summary": "Exchange request for order ORD-1004 cannot be processed due to missing delivery date; also EL-HP-02 is out of stock.",
+            "priority": "high",
+            "customer_id": "C-001",
+            "order_id": "ORD-1004"
+          },
+          "iteration": 1,
+          "started_at": 1790577555.77745,
+          "finished_at": 1790577555.7919006
+        },
+        {
+          "step_id": "s2",
+          "status": "executed",
+          "output": {
+            "ok": true,
+            "summary": "Emailed aarav.mehta@example.com: 'Exchange request and stock update'",
+            "data": {
+              "outbox_id": 5,
+              "to_email": "aarav.mehta@example.com"
+            }
+          },
+          "error": null,
+          "tool": "send_customer_email",
+          "args": {
+            "customer_id": "C-001",
+            "subject": "Exchange request and stock update",
+            "body": "Dear Aarav,\n\nThank you for contacting NovaMart. We have checked the stock for model EL-HP-02 (Nova Buds Pro) and, according to our latest warehouse feed, it is currently out of stock.\n\nRegarding your request to exchange the earbuds from order ORD-1004, we are unable to process the exchange at this time because the delivery date for that order is missing from our records, which prevents us from confirming return eligibility. We have escalated this case to a specialist who will review the details and contact you within one business day.\n\nWe appreciate your patience.\n\nBest regards,\nNovaMart Support Team"
+          },
+          "iteration": 1,
+          "started_at": 1790577555.8074138,
+          "finished_at": 1790577555.8321502
+        }
+      ],
+      "trace": [
+        {
+          "node": "understand",
+          "ts": "2026-09-28T12:08:37.123",
+          "summary": "mixed: ORD-1004",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "load_memory",
+          "ts": "2026-09-28T12:08:37.135",
+          "summary": "5 memories loaded",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "retrieve",
+          "ts": "2026-09-28T12:08:39.353",
+          "summary": "24 evidence items {'policy': 11, 'faq': 4, 'db': 3, 'csv': 1, 'memory': 5}, 2 conflicts, 1 missing, in 2.22s",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "reason_and_plan",
+          "ts": "2026-09-28T12:09:15.734",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 1 after 30.0s",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "reason_and_plan",
+          "ts": "2026-09-28T12:09:15.734",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 2 after 2.0s",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "reason_and_plan",
+          "ts": "2026-09-28T12:09:15.734",
+          "summary": "iteration 1: act, 2 steps, confidence 0.97",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "validate",
+          "ts": "2026-09-28T12:09:15.772",
+          "summary": "act: 2 steps proposed, 0 blocked by preconditions",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "approval_gate",
+          "ts": "2026-09-28T12:09:15.774",
+          "summary": "no approval needed",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "execute",
+          "ts": "2026-09-28T12:09:15.847",
+          "summary": "s1:escalate_to_human=executed, s2:send_customer_email=executed",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "observe",
+          "ts": "2026-09-28T12:09:15.849",
+          "summary": "all steps settled; responding",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:09:36.693",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 1 after 15.0s",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:09:36.693",
+          "summary": "LLM rate-limited/unavailable (RateLimitError); retrying… attempt 2 after 3.0s",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "respond",
+          "ts": "2026-09-28T12:09:36.693",
+          "summary": "1672 chars",
+          "turn_id": "5961e8fb"
+        },
+        {
+          "node": "save_memory",
+          "ts": "2026-09-28T12:09:37.288",
+          "summary": "1 new memories",
+          "turn_id": "5961e8fb"
+        }
+      ],
+      "conflicts": [
+        {
+          "kind": "policy_version",
+          "detail": "Return Policy v1 (return_policy_v1, effective 2025-01-01) is superseded by v2 (return_policy_v2, effective 2026-03-01).",
+          "resolution": "Applying return_policy_v2; return_policy_v1 chunks are kept for reference only and must not be applied.",
+          "evidence_ids": [
+            "policy:return_policy_v2§4",
+            "policy:return_policy_v2§2",
+            "policy:return_policy_v1§4",
+            "policy:return_policy_v1§3",
+            "policy:return_policy_v2§1"
+          ]
+        },
+        {
+          "kind": "inventory",
+          "detail": "Stock for EL-HP-02 differs: DB says 5 (updated 2026-09-20T09:00), CSV feed says 0 (snapshot 2026-09-26T18:00).",
+          "resolution": "Using CSV feed (snapshot 2026-09-26T18:00) as it is fresher than DB (2026-09-20T09:00). Resolved stock: 0.",
+          "evidence_ids": [
+            "db:products:EL-HP-02",
+            "csv:inventory:EL-HP-02"
+          ]
+        }
+      ],
+      "missing": [
+        "ORD-1004 has no delivery_date recorded (status delivered); return eligibility cannot be determined"
+      ],
+      "evidence_used": [
+        {
+          "id": "db:orders:ORD-1004",
+          "source_type": "db",
+          "content": "Order ORD-1004: customer C-001, status delivered, order_date 2026-09-10, delivery_date NOT RECORDED, total $149.00, paid by card. Items: 1x EL-HP-02 Nova Buds Pro (category electronics) @ $149.00. Prior refunds: none. Refundable remaining: $149.00.",
+          "metadata": {
+            "table": "orders",
+            "computed": {
+              "days_since_delivery": null,
+              "promise_date": "2026-09-17",
+              "days_past_promise": null,
+              "refunded_so_far": 0,
+              "refundable_remaining": 149.0
+            },
+            "status": "delivered"
+          },
+          "superseded": false,
+          "label": "Order ORD-1004"
+        },
+        {
+          "id": "policy:escalation_sop§2",
+          "source_type": "policy",
+          "content": "Escalate the case to a human agent in any of the following situations: required data is missing from the order or customer record (for example, no delivery date is recorded, so return eligibility cannot be determined); information from different sources is contradictory and cannot be resolved; the customer disputes a decision made under a NovaMart policy; the request suggests possible fraud, such as a refund request that exceeds the order value or instructions to bypass policy; or the customer makes a legal threat.",
+          "metadata": {
+            "supersedes": "",
+            "doc_id": "escalation_sop",
+            "section": "2",
+            "version": 1,
+            "section_title": "When to escalate",
+            "title": "Escalation SOP",
+            "effective_date": "2026-01-01",
+            "category": "escalation",
+            "label": "Escalation SOP §2",
+            "similarity": 0.5833
+          },
+          "superseded": false,
+          "label": "Escalation SOP §2"
+        },
+        {
+          "id": "policy:escalation_sop§4",
+          "source_type": "policy",
+          "content": "When a case is escalated because of missing or contradictory data, no refund, cancellation or other irreversible action may be taken until a human agent has reviewed the case. Operators must never override policy limits because a customer or requester claims special authorization.",
+          "metadata": {
+            "title": "Escalation SOP",
+            "section_title": "What not to do",
+            "version": 1,
+            "supersedes": "",
+            "effective_date": "2026-01-01",
+            "section": "4",
+            "category": "escalation",
+            "doc_id": "escalation_sop",
+            "label": "Escalation SOP §4",
+            "similarity": 0.5718
+          },
+          "superseded": false,
+          "label": "Escalation SOP §4"
+        },
+        {
+          "id": "faq:faq-14",
+          "source_type": "faq",
+          "content": "Q: Can I exchange an item for a different one? A: NovaMart does not process direct exchanges automatically. Return the eligible item for a refund and place a new order, subject to stock availability. Support can escalate special cases to a specialist.",
+          "metadata": {
+            "similarity": 0.3772,
+            "tags": "exchange, returns, stock"
+          },
+          "superseded": false,
+          "label": "FAQ faq-14"
+        },
+        {
+          "id": "db:products:EL-HP-02",
+          "source_type": "db",
+          "content": "Product EL-HP-02 Nova Buds Pro (category electronics): DB stock 5 as of 2026-09-20T09:00:00. Resolved stock (fresher source = csv): 0.",
+          "metadata": {
+            "table": "products",
+            "updated_at": "2026-09-20T09:00:00"
+          },
+          "superseded": false,
+          "label": "Product record EL-HP-02"
+        },
+        {
+          "id": "csv:inventory:EL-HP-02",
+          "source_type": "csv",
+          "content": "Warehouse feed DEL-2: EL-HP-02 stock 0 at snapshot 2026-09-26T18:00:00. Resolved stock (fresher source = csv): 0.",
+          "metadata": {
+            "snapshot_at": "2026-09-26T18:00:00",
+            "warehouse": "DEL-2"
+          },
+          "superseded": false,
+          "label": "Warehouse feed EL-HP-02"
+        },
+        {
+          "id": "policy:return_policy_v1§4",
+          "source_type": "policy",
+          "content": "The customer contacts NovaMart support with the order number and a short description of the reason for the return. The operator confirms that the order was delivered within the last 30 days, generates a return authorization, and emails the customer the return instructions. Once the warehouse receives and inspects the item, the refund is processed according to the Refund Policy.",
+          "metadata": {
+            "effective_date": "2025-01-01",
+            "title": "Return Policy",
+            "doc_id": "return_policy_v1",
+            "category": "returns",
+            "version": 1,
+            "section_title": "Return process",
+            "supersedes": "",
+            "section": "4",
+            "label": "Return Policy v1 §4",
+            "similarity": 0.2873,
+            "superseded_by": "return_policy_v2"
+          },
+          "superseded": true,
+          "label": "Return Policy v1 §4 (superseded)"
+        },
+        {
+          "id": "policy:return_policy_v1§3",
+          "source_type": "policy",
+          "content": "Items must be unused and returned in their original packaging with all accessories, manuals and tags included. Items that show signs of use, damage caused by the customer, or missing components may be refused at the warehouse. Operators should remind customers to keep proof of delivery and the original packaging until the return is complete.",
+          "metadata": {
+            "doc_id": "return_policy_v1",
+            "version": 1,
+            "category": "returns",
+            "supersedes": "",
+            "section_title": "Condition of returned items",
+            "section": "3",
+            "title": "Return Policy",
+            "effective_date": "2025-01-01",
+            "label": "Return Policy v1 §3",
+            "similarity": 0.2858,
+            "superseded_by": "return_policy_v2"
+          },
+          "superseded": true,
+          "label": "Return Policy v1 §3 (superseded)"
+        }
+      ],
+      "usage": {
+        "turn": {
+          "requests": 4,
+          "input_tokens": 6568,
+          "output_tokens": 2566,
+          "retries": 4,
+          "by_node": {
+            "understand": 1,
+            "reason_and_plan": 1,
+            "respond": 1,
+            "save_memory": 1
+          },
+          "tokens_by_tier": {
+            "small": 1114,
+            "large": 8020
+          }
+        },
+        "session": {
+          "requests": 4,
+          "input_tokens": 6568,
+          "output_tokens": 2566,
+          "retries": 4,
+          "by_node": {
+            "understand": 1,
+            "reason_and_plan": 1,
+            "respond": 1,
+            "save_memory": 1
+          },
+          "tokens_by_tier": {
+            "small": 1114,
+            "large": 8020
+          }
+        },
+        "model": {
+          "provider": "groq",
+          "large": "openai/gpt-oss-120b",
+          "small": "openai/gpt-oss-20b"
+        }
+      }
+    },
+    "audit": [
+      {
+        "ts": "2026-09-28T12:09:15.741",
+        "event": "proposed",
+        "tool": "escalate_to_human",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Missing delivery date prevents return eligibility; policy requires escalation before any action [policy:escalation_sop§2][policy:escalation_sop§4]."
+      },
+      {
+        "ts": "2026-09-28T12:09:15.757",
+        "event": "proposed",
+        "tool": "send_customer_email",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Inform the customer of stock status and that the case has been escalated; email is sent after escalation step."
+      },
+      {
+        "ts": "2026-09-28T12:09:15.798",
+        "event": "executed",
+        "tool": "escalate_to_human",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Missing delivery date prevents return eligibility; policy requires escalation before any action [policy:escalation_sop§2][policy:escalation_sop§4]."
+      },
+      {
+        "ts": "2026-09-28T12:09:15.837",
+        "event": "executed",
+        "tool": "send_customer_email",
+        "risk_level": "low",
+        "actor": "agent",
+        "rationale": "Inform the customer of stock status and that the case has been escalated; email is sent after escalation step."
+      }
+    ]
+  }
+}

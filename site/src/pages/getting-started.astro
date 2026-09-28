@@ -1,0 +1,51 @@
+---
+import Base from "../layouts/Base.astro";
+import Shot from "../components/Shot.astro";
+import { readmeSection } from "../lib/data";
+
+// Rendered from the README at build time so the two cannot drift apart.
+const quickStart = readmeSection("Quick start");
+const testing = readmeSection("Testing");
+---
+
+<Base path="/getting-started">
+  <header class="page-head">
+    <p class="kicker">Getting started</p>
+    <h1>Run OpsPilot on your own machine</h1>
+    <p class="lede">
+      OpsPilot runs locally: Python 3.11 or newer, a free Groq API key for the live model, and about a minute to
+      seed the data. Without a key, a scripted demo mode runs every documented scenario.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="setup">
+    <p class="section-label">From the README</p>
+    <h2 id="setup">Quick start</h2>
+    <div class="row">
+      <div class="prose readme" set:html={quickStart} />
+      <aside class="note" aria-label="Side note: Where data goes">
+        <span class="note-label" aria-hidden="true">Where data goes</span>
+        Seeding writes a SQLite database, a Chroma index and LangGraph checkpoints under
+        <code>data/runtime/</code>. The <a href="/privacy">privacy notice</a> lists what is sent to the model
+        provider.
+      </aside>
+    </div>
+  </section>
+
+  <Shot
+    file="memory.png"
+    number={1}
+    alt="The Memory tab listing long-term memories: a preference that customer C-007 prefers store credit over card refunds, and one-line interaction summaries for other customers, each with a Delete button."
+    caption="After the sidebar scenarios have run on the live model, the Memory tab shows what the agent learned, including a customer's refund preference."
+  />
+
+  <section class="section" aria-labelledby="tests">
+    <p class="section-label">From the README</p>
+    <h2 id="tests">Testing</h2>
+    <div class="prose readme" set:html={testing} />
+    <p>
+      Once it runs, the <a href="/scenarios">twelve scenarios</a> are a good first tour, and
+      <a href="/how-it-works">how it works</a> explains what each panel in the app shows.
+    </p>
+  </section>
+</Base>

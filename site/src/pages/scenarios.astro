@@ -1,0 +1,119 @@
+---
+import Base from "../layouts/Base.astro";
+import { OUTCOMES, OUTCOMES_ARE_LIVE, REPORTS, SCENARIOS } from "../lib/data";
+
+const live = REPORTS.main?.sections[0] ?? REPORTS.mainPartial?.sections[0] ?? null;
+const liveFile = REPORTS.main?.file ?? REPORTS.mainPartial?.file ?? "";
+const liveRow = (id: number | string) => live?.tables[0]?.rows.find((r) => r[0] === String(id)) ?? null;
+const resultIdx = live?.tables[0]?.head.indexOf("Result") ?? -1;
+const list = (v: string | string[]) => (Array.isArray(v) ? v.join(" or ") : v);
+const outcome = (id: number | string) => OUTCOMES?.scenarios.find((o) => String(o.id) === String(id));
+const safetyLinked = new Set(["3", "9", "12", "8"]);
+---
+
+<Base path="/scenarios">
+  <header class="page-head">
+    <p class="kicker">Scenarios</p>
+    <h1>Twelve requests and what the agent did with each</h1>
+    <p class="lede">
+      These are the demo and evaluation scenarios from the project brief, from a plain policy question to a prompt
+      injection. For each one: the exact prompt, what the evaluation expects, and the steps the agent actually took.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="source">
+    <p class="section-label">Where the outcomes come from</p>
+    <h2 id="source" class="visually-hidden">Source of the outcomes</h2>
+    <div class="row">
+      <div class="prose">
+        {
+          OUTCOMES && (
+            <p>
+              {OUTCOMES_ARE_LIVE
+                ? `Outcomes are from the live run started ${OUTCOMES.meta.started.replace("T", " ")} on ${OUTCOMES.meta.model.large}.`
+                : `Outcomes below are from the evaluation harness in scripted demo mode, run ${OUTCOMES.meta.started.replace("T", " ")}: the model's text is scripted, while retrieval, risk rules, approvals, preconditions and database writes are real.`}{" "}Where the live model has been scored on a scenario, its result from <code>{liveFile}</code> is shown too.
+            </p>
+          )
+        }
+      </div>
+      <aside class="note" aria-label="Side note: Try one">
+        <span class="note-label" aria-hidden="true">Try one</span>
+        Every prompt is a button under Demo scenarios in the app. <a href="/getting-started">Getting started</a>
+        explains how to run it.
+      </aside>
+    </div>
+  </section>
+
+  <div>
+    {
+      SCENARIOS.map((sc) => {
+        const o = outcome(sc.id);
+        const row = liveRow(sc.id);
+        const liveResult = row && resultIdx >= 0 ? row[resultIdx].split(" ")[0] : null;
+        return (
+          <article class="scenario" aria-labelledby={`s${sc.id}`}>
+            <div class="scenario-head">
+              <span class="num">Scenario {sc.id}</span>
+              <h2 id={`s${sc.id}`}>{sc.name}</h2>
+            </div>
+            {sc.turns.map((t, i) => (
+              <p class="prompt">
+                <span class="who">
+                  Operator{sc.turns.length > 1 ? `, turn ${i + 1}${t.new_session ? " (new session)" : ""}` : ""}
+                </span>
+                {t.input}
+              </p>
+            ))}
+            <dl class="facts">
+              <dt>Expected</dt>
+              <dd>
+                Decision {list(sc.expected_decision_type)}
+                {sc.expected_tools.length > 0 ? `; runs ${sc.expected_tools.join(", ")}` : "; no actions"}
+                {sc.must_require_approval ? "; must stop for approval" : "; no approval"}
+                {sc.must_not_tools && sc.must_not_tools.length > 0 && `; never ${sc.must_not_tools.join(", ")}`}.
+              </dd>
+              {o && (
+                <>
+                  <dt>Decision</dt>
+                  <dd>
+                    {o.decision_type}
+                    {o.iterations > 1 && ` after ${o.iterations} planning iterations`}
+                    {o.approval_requested && `, paused for approval, then ${o.approval_response?.approved ? "approved" : "rejected"}`}
+                    {o.conflicts.length > 0 && `; conflicts detected: ${[...new Set(o.conflicts)].join(", ").replace(/_/g, " ")}`}
+                  </dd>
+                  <dt>Steps</dt>
+                  <dd>
+                    {o.steps.length === 0 ? (
+                      "none"
+                    ) : (
+                      <ul>
+                        {o.steps.map((st) => (
+                          <li>
+                            <span class={`tag ${st.status}`}>{st.status}</span>{" "}<span class="mono">{st.tool}</span>: {st.summary}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </dd>
+                  <dt>Checks</dt>
+                  <dd>{o.passed ? "all passed in this run" : "not all passed in this run"}</dd>
+                </>
+              )}
+              {liveResult && (
+                <>
+                  <dt>Live model</dt>
+                  <dd><span class={`tag ${liveResult}`}>{liveResult}</span> in the live run</dd>
+                </>
+              )}
+            </dl>
+            {safetyLinked.has(String(sc.id)) && (
+              <p>
+                The rules behind this outcome are on the <a href={`/safety#${sc.id === 8 ? "grounding" : sc.id === 12 ? "injection" : "gate"}`}>safety page</a>.
+              </p>
+            )}
+          </article>
+        );
+      })
+    }
+  </div>
+</Base>

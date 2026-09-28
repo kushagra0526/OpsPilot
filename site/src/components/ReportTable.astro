@@ -1,0 +1,41 @@
+---
+// Renders a table parsed from an evals/*.md report; pass/fail cells become text labels.
+import type { Table } from "../lib/data";
+
+interface Props {
+  table: Table;
+  caption: string;
+  label: string;
+  drop?: string[];
+}
+const { table, caption, label, drop = [] } = Astro.props;
+const keep = table.head.map((h, i) => (drop.includes(h) ? -1 : i)).filter((i) => i >= 0);
+const numeric = new Set(["Latency (s)", "LLM calls", "Tokens", "Passed", "Checks"]);
+const status = (v: string) => /^(pass|fail)$/.test(v) ? v : /^(pass|fail)\b/.test(v) ? v.split(" ")[0] : null;
+---
+
+<section class="table-scroll" aria-label={label} tabindex="0">
+  <table>
+    <caption>{caption}</caption>
+    <thead>
+      <tr>{keep.map((i) => <th scope="col" class={numeric.has(table.head[i]) ? "num" : undefined}>{table.head[i]}</th>)}</tr>
+    </thead>
+    <tbody>
+      {
+        table.rows.map((row) => (
+          <tr>
+            {keep.map((i) => {
+              const v = row[i] ?? "";
+              const s = status(v);
+              return (
+                <td class={numeric.has(table.head[i]) ? "num" : table.head[i] === "#" ? "mono" : undefined}>
+                  {s ? <span class={`tag ${s}`}>{s}</span> : v}
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+    </section>

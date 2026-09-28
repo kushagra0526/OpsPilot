@@ -1,0 +1,29 @@
+{
+  "name": "opspilot-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "assets": "node scripts/build-assets.mjs",
+    "dev": "npm run assets && astro dev",
+    "build": "npm run assets && astro build",
+    "preview": "astro preview --port 4321",
+    "check": "node scripts/check-all.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5",
+    "marked": "^18.0.14",
+    "sharp": "^0.35.4",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "html-validate": "^11.16.0",
+    "lighthouse": "^13.5.0",
+    "linkinator": "^8.1.0",
+    "mermaid": "^12.0.0",
+    "node-html-parser": "^9.0.4",
+    "playwright": "^1.63.0"
+  }
+}

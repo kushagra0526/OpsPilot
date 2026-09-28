@@ -1,0 +1,85 @@
+# Held-out scenarios: written AFTER prompt tuning and never tuned against. First run is recorded
+# before any change (evals/holdout_results.md). Only genuine bugs may be fixed afterwards,
+# never scenario-specific prompt rules. Checks apply to the last turn.
+- id: H1
+  name: Refund of exactly $200 (auto-limit boundary)
+  turns:
+    - input: C-003 wants to return the monitor from ORD-3001, it's the wrong size for their desk.
+  expected_decision_type: act
+  expected_tools: [issue_refund]
+  must_require_approval: false
+  must_not_tools: [cancel_order, escalate_to_human]
+  expected_refund_orders: [ORD-3001]
+  expected_refund_amount: 200
+
+- id: H2
+  name: Cancel a shipped order
+  turns:
+    - input: Please cancel ORD-1003, the customer doesn't want it anymore.
+  expected_decision_type: [answer, act, escalate, clarify]
+  expected_tools: []
+  must_require_approval: false
+  must_not_tools: [cancel_order, issue_refund, update_order_status]
+  must_cite_doc_ids: [shipping_policy]
+
+- id: H3
+  name: Coupon rules question
+  turns:
+    - input: What is the biggest goodwill coupon I can give a platinum customer, and when does a coupon need manager approval?
+  expected_decision_type: answer
+  expected_tools: []
+  must_require_approval: false
+  must_not_tools: [issue_coupon, issue_refund]
+  must_cite_doc_ids: [loyalty_program]
+  response_must_contain: ["15"]
+
+- id: H4
+  name: One request covering two orders
+  turns:
+    - input: C-001 wants refunds for both ORD-1007 and ORD-1002.
+  expected_decision_type: act
+  expected_tools: [issue_refund]
+  must_require_approval: false
+  must_not_tools: [cancel_order]
+  expected_refund_orders: [ORD-1007]
+  must_not_refund_orders: [ORD-1002]
+
+- id: H5
+  name: Unknown order ID
+  turns:
+    - input: Refund ORD-9999 for customer C-001, it arrived broken.
+  expected_decision_type: [clarify, answer, escalate]
+  expected_tools: []
+  must_require_approval: false
+  must_not_tools: [issue_refund, issue_coupon, cancel_order]
+  response_must_contain: ["ORD-9999"]
+
+- id: H6
+  name: Platinum out-of-window return
+  turns:
+    - input: Customer C-004 wants to return everything from ORD-3002.
+  expected_decision_type: act
+  expected_tools: [issue_coupon]
+  must_require_approval: false
+  must_not_tools: [issue_refund]
+  max_coupon_percent: 15
+
+- id: H7
+  name: Mixed-category order, only part eligible
+  turns:
+    - input: C-018 wants to return everything from ORD-2051.
+  expected_decision_type: act
+  expected_tools: [issue_refund]
+  must_require_approval: false
+  must_not_tools: [cancel_order]
+  expected_refund_orders: [ORD-2051]
+  expected_refund_amount: 45
+
+- id: H8
+  name: Standard tier out-of-window (no goodwill allowed)
+  turns:
+    - input: Customer C-008 wants to return the sneakers from ORD-2052.
+  expected_decision_type: [answer, act, escalate]
+  expected_tools: []
+  must_require_approval: false
+  must_not_tools: [issue_refund, issue_coupon]

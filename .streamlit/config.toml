@@ -1,0 +1,89 @@
+# OpsPilot theme: same palette and self-hosted fonts as the project site (site/src/styles).
+[server]
+enableStaticServing = true
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#2E5E4E"
+backgroundColor = "#F6F4EF"
+secondaryBackgroundColor = "#EEEAE1"
+textColor = "#1C1B19"
+linkColor = "#2E5E4E"
+linkUnderline = true
+borderColor = "#D9D3C6"
+dataframeBorderColor = "#D9D3C6"
+dataframeHeaderBackgroundColor = "#EEEAE1"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "2px"
+buttonRadius = "2px"
+codeBackgroundColor = "#EEEAE1"
+codeTextColor = "#1C1B19"
+font = "Public Sans"
+headingFont = "Newsreader"
+codeFont = "IBM Plex Mono"
+baseFontSize = 15
+# Muted status colours; no purple anywhere (violet is mapped to warm grey).
+redColor = "#8A3A2F"
+orangeColor = "#7A5A12"
+yellowColor = "#7A5A12"
+greenColor = "#3F6147"
+blueColor = "#2F4A6B"
+violetColor = "#5E5A52"
+grayColor = "#5E5A52"
+redBackgroundColor = "#F1DDD7"
+orangeBackgroundColor = "#F2E7CC"
+yellowBackgroundColor = "#F2E7CC"
+greenBackgroundColor = "#E2EADF"
+blueBackgroundColor = "#E0E6EC"
+violetBackgroundColor = "#E8E4DA"
+grayBackgroundColor = "#E8E4DA"
+redTextColor = "#8A3A2F"
+orangeTextColor = "#6E510F"
+yellowTextColor = "#6E510F"
+greenTextColor = "#3F6147"
+blueTextColor = "#2F4A6B"
+violetTextColor = "#4A4740"
+grayTextColor = "#4A4740"
+
+[[theme.fontFaces]]
+family = "Public Sans"
+url = "app/static/fonts/public-sans-latin-400-normal.woff2"
+weight = 400
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Public Sans"
+url = "app/static/fonts/public-sans-latin-400-italic.woff2"
+weight = 400
+style = "italic"
+
+[[theme.fontFaces]]
+family = "Public Sans"
+url = "app/static/fonts/public-sans-latin-600-normal.woff2"
+weight = 600
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Newsreader"
+url = "app/static/fonts/newsreader-latin-500-normal.woff2"
+weight = 500
+style = "normal"
+
+[[theme.fontFaces]]
+family = "IBM Plex Mono"
+url = "app/static/fonts/ibm-plex-mono-latin-400-normal.woff2"
+weight = 400
+style = "normal"
+
+[[theme.fontFaces]]
+family = "IBM Plex Mono"
+url = "app/static/fonts/ibm-plex-mono-latin-500-normal.woff2"
+weight = 500
+style = "normal"
